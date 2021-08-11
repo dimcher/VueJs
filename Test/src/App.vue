@@ -1,11 +1,17 @@
 <template>
   <div id="app">
-    <Header :account="account" :googleId="googleId" @getAccount="getAccount($event)" />
-    <Table :account="account" :googleId="googleId" />
+    <div v-if="googleId">
+      <Header :account="account" :googleId="googleId" @getAccount="getAccount($event)" />
+      <Table :account="account" :googleId="googleId" />
+    </div>
+    <div v-else>
+      <GoogleId @getGoogleId="getGoogleId" />
+    </div>
   </div>
 </template>
 
 <script>
+import GoogleId from './components/GoogleId'
 import Header from './components/Header'
 import Table from './components/Table'
 
@@ -13,22 +19,27 @@ export default {
   name: 'App',
   components: {
     Header,
-    Table
+    Table,
+    GoogleId
   },
   props: {
-      googleId: {
+      googleIds: {
         style: String,
-        default: '81c14de2-6891-461b-9ea6-3ed218675b8f'
+        default: ''// '81c14de2-6891-461b-9ea6-3ed218675b8f'
       }
   },
   data: () => {
     return {
-      account: "1"
+      account: "1",
+      googleId: ""
     }
   },
   methods: {
-    getAccount: function (event) {
-      this.account = event;
+    getGoogleId: function (id) {
+      this.googleId = id;
+    },
+    getAccount: function (account) {
+      this.account = account;
     }
   }
 }

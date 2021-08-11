@@ -4,20 +4,25 @@
         <tr>
             <th v-for="(value, index) in keys" :key="`thead-${index}`">{{head[value]}}</th>
         </tr>
-        <tr v-for="(rv, ri) in options" :key="`row-${ri}`">
-            <td v-for="(cv, vi) in keys" :key="`value-${vi}`">{{rv[cv]}}</td>
-            <OptionDelete :optionId="rv['rooftopGoogleOptionId']" :googleId="googleId" @refreshMe="refreshMe()" />
-        </tr>
+        <tbody :key="JSON.stringify(options)">
+            <tr v-for="(rv, ri) in options" :key="`row-${ri}`">
+                <td v-for="(cv, vi) in keys" :key="`value-${vi}`">{{rv[cv]}}</td>
+                <OptionEdit :optionId="rv['rooftopGoogleOptionId']" :googleId="googleId" @refreshList="refreshMe" />
+                <OptionDelete :optionId="rv['rooftopGoogleOptionId']" :googleId="googleId" @refreshList="refreshMe" />
+            </tr>
+        </tbody>
     </table>
 </div>
 </template>
 
 <script>
 import axios from 'axios';
+import OptionEdit from './OptionEdit'
 import OptionDelete from './OptionDelete'
 export default {
     name: 'Table',
     components: {
+        OptionEdit,
         OptionDelete
     },
     props: {
@@ -38,7 +43,8 @@ export default {
                 "dotDigitalId" : "Digital ID"
             },
             errors: [],
-            options: []
+            options: [],
+            force: false
         }
     },
     watch: {
@@ -51,11 +57,10 @@ export default {
     },
     methods: {
         refreshMe() {
-            this.getOptions()
+            this.getOptions();
         },
         getOptions() {
             let that = this;
-            console.log("here");
             axios
                 .get('https://services.metricsamsi.com/v1.0/dealers/Options/'+ that.account +'?apiKey='+ that.googleId)
                 .then(function (response) {

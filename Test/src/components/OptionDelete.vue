@@ -21,19 +21,18 @@ export default {
     },
     methods: {
         deleteOption() {
-            console.log("Delete");
             let that = this;
             axios
                 .delete('https://services.metricsamsi.com/v1.0/dealers/Options/'+ that.optionId +'?apiKey='+ that.googleId)
                 .then(function () {
-                    this.refreshList();
+                    that.refreshList();
                 })
                 .catch(e => {
                     that.errors.push(e);
                 });
         },
         refreshList: function () {
-            this.$emit('refreshMe');
+            this.$emit('refreshList');
         }
 
     }
