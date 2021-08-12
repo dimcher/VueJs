@@ -1,5 +1,13 @@
 <template>
-    <td><button @click="refreshList">EDIT</button></td>
+    <div>
+        <div class="sign">Option Editor</div>
+        <div>Option: {{option.rooftopGoogleOptionId}}</div>
+        <p v-for="(v, i) in keys" :key="`row-${i}`">
+            {{ head[v] }} <input type="text" :name="`${v}`" :value="option[v]">
+        </p>
+        <button @click="cancelEdit">CANCEL</button>
+        <button @click="editProps">SUBMIT</button>
+    </div>
 </template>
 
 <script>
@@ -7,8 +15,14 @@ import axios from 'axios';
 export default {
     name: 'OptionEdit',
     props: {
-        optionId: {
-            type: Number
+        option: {
+            type: Object
+        },
+        keys: {
+            type: Array
+        },
+        head: {
+            type: Object
         },
         googleId: {
             style: String
@@ -16,31 +30,35 @@ export default {
     },
     data: () => {
         return {
-            errors: []
         }
     },
     methods: {
-        deleteOption() {
-            console.log("Edit");
+        cancelEdit: function () {
+            this.$emit('doAction', {});
+        },
+        editProps: function () {
+            let props = {};
+            for(const key of this.keys) {
+                props[key] = document.querySelector("input[name="+ key + "]").value;
+            }
             let that = this;
             axios
-                .patch('https://services.metricsamsi.com/v1.0/dealers/Options/'+ that.optionId +'?apiKey='+ that.googleId)
+                .patch('https://services.metricsamsi.com/v1.0/dealers/Options/'+ that.option.rooftopGoogleOptionId +'?apiKey='+ that.googleId, props)
                 .then(function () {
-                    this.refreshList();
+                    console.log("done");
                 })
                 .catch(e => {
                     that.errors.push(e);
                 });
-        },
-        refreshList: function () {
-            this.$emit('refreshMe');
+            this.$emit('editedProps', props);
         }
-
     }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    
+    .sign { color: red; }
+    input { width: 300px; }
+    button { font-weight: bold; }
 </style>

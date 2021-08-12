@@ -5,7 +5,7 @@
 <script>
 import axios from 'axios';
 export default {
-    name: 'OptionDelete',
+    name: 'BtnOptionDelete',
     props: {
         optionId: {
             type: Number

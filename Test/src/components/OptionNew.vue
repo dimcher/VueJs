@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="sign">Please enter Google ID</div>
+        <div class="sign">Option Editor</div>
+        <div class="sign">New Option</div>
         <p><input type="text" name="googleId" /></p>
         <button :name="googleId" @click="getGoogleId">SUBMIT</button>
     </div>
@@ -8,7 +9,7 @@
 
 <script>
 export default {
-    name: 'GoogleId',
+    name: 'OptionNew',
     props: {
     },
     data: () => {
