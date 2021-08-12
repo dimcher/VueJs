@@ -1,26 +1,58 @@
 <template>
     <div>
         <div class="sign">Option Editor</div>
-        <div class="sign">New Option</div>
-        <p><input type="text" name="googleId" /></p>
-        <button :name="googleId" @click="getGoogleId">SUBMIT</button>
+        <div>New Option</div>
+        <div class="inputs" v-for="(v, i) in keys" :key="`row-${i}`">
+            <div class="desc">{{ head[v] }}</div>
+            <div class="input"><input type="text" :name="`${v}`"></div>
+        </div>
+        <button @click="procProps">SUBMIT</button>
+        <button @click="closeAction">CANCEL</button>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
-    name: 'OptionNew',
+    name: 'OptionEdit',
     props: {
+        option: {
+            type: Object
+        },
+        keys: {
+            type: Array
+        },
+        head: {
+            type: Object
+        },
+        googleId: {
+            style: String
+        }
     },
     data: () => {
         return {
-            googleId: ''
+            errors: []
         }
     },
     methods: {
-        getGoogleId: function () {
-            const id = document.querySelector("input[name=googleId]").value;
-            this.$emit('getGoogleId', id);
+        closeAction: function () {
+            this.$emit('doAction', {});
+        },
+        procProps: function () {
+            let props = {};
+            for(const key of this.keys) {
+                props[key] = document.querySelector("input[name="+ key + "]").value;
+            }
+            let that = this;
+            axios
+                .patch('https://services.metricsamsi.com/v1.0/dealers/Options/?apiKey='+ that.googleId, props)
+                .then(function () {
+                    that.closeAction();
+                })
+                .catch(e => {
+                    that.errors.push(e);
+                    that.closeAction();
+                });
         }
     }
 }
@@ -31,4 +63,6 @@ export default {
     .sign { color: red; }
     input { width: 300px; }
     button { font-weight: bold; }
+    .inputs { margin: 10px; }
+    .inputs > div.desc { font-weight: bold; }
 </style>

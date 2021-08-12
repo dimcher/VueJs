@@ -1,40 +1,19 @@
 <template>
-    <td><button @click="deleteOption">DELETE</button></td>
+    <td><button @click="actionOption">DELETE</button></td>
 </template>
 
 <script>
-import axios from 'axios';
 export default {
     name: 'BtnOptionDelete',
     props: {
-        optionId: {
-            type: Number
-        },
-        googleId: {
-            style: String
-        }
-    },
-    data: () => {
-        return {
-            errors: []
+        option: {
+            type: Object
         }
     },
     methods: {
-        deleteOption() {
-            let that = this;
-            axios
-                .delete('https://services.metricsamsi.com/v1.0/dealers/Options/'+ that.optionId +'?apiKey='+ that.googleId)
-                .then(function () {
-                    that.refreshList();
-                })
-                .catch(e => {
-                    that.errors.push(e);
-                });
-        },
-        refreshList: function () {
-            this.$emit('refreshList');
+        actionOption: function () {
+            this.$emit('doAction', { type: 'DELETE', option: this.option });
         }
-
     }
 }
 </script>

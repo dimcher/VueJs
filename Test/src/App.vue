@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <div v-if="googleId">
-      <Header :account="account" :googleId="googleId" @getAccount="getAccount($event)" />
-      <Table :account="account" :googleId="googleId" />
+      <Header :account="account" :googleId="googleId" @getAccount="getAccount($event)" @doAction="doAction" />
+      <Table :account="account" :googleId="googleId" :toDo="action" />
     </div>
     <div v-else>
       <GoogleId @getGoogleId="getGoogleId" />
@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import GoogleId from './components/GoogleId'
-import Header from './components/Header'
 import Table from './components/Table'
+import Header from './components/Header'
+import GoogleId from './components/GoogleId'
 
 export default {
   name: 'App',
@@ -31,7 +31,8 @@ export default {
   data: () => {
     return {
       account: "1",
-      googleId: ""
+      googleId: "",
+      action: {}
     }
   },
   methods: {
@@ -40,6 +41,9 @@ export default {
     },
     getAccount: function (account) {
       this.account = account;
+    },
+    doAction: function (action) {
+        this.action = action;
     }
   }
 }

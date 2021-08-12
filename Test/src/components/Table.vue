@@ -4,7 +4,7 @@
         <OptionEdit :option="action.option" @doAction="doAction" :keys="keys" :head="head" :googleId="googleId" />
     </div>
     <div v-else-if="action.type === 'NEW'">
-        <OptionNew @soAction="doAction" />
+        <OptionNew :keys="keys" :head="head" @doAction="doAction" :googleId="googleId" />
     </div>
     <div v-else>
         <table>
@@ -16,7 +16,7 @@
                 <tr v-for="(rv, ri) in options" :key="`row-${ri}`">
                     <td v-for="(cv, vi) in keys" :key="`value-${vi}`">{{rv[cv]}}</td>
                     <BtnOptionEdit :optionId="rv['rooftopGoogleOptionId']" :option="rv" @doAction="doAction" />
-                    <BtnOptionDelete :optionId="rv['rooftopGoogleOptionId']" :googleId="googleId" @refreshList="refreshMe" />
+                    <BtnOptionDelete :optionId="rv['rooftopGoogleOptionId']" :option="rv" @doAction="doAction" />
                 </tr>
             </tbody>
         </table>
@@ -45,6 +45,10 @@ export default {
         },
         googleId: {
             style: String
+        },
+        toDo: {
+            style: Object,
+            default: {}
         }
     },
     data: () => {
@@ -62,9 +66,12 @@ export default {
         }
     },
     watch: {
-        account: function() {
+        account: function () {
             this.getOptions();
         },
+        toDo: function () {
+            this.doAction(this.toDo);
+        }
     },
     created: function() {
         this.getOptions();
@@ -74,7 +81,12 @@ export default {
             this.getOptions();
         },
         doAction(action) {
+            console.log('b');
             this.action = action;
+            
+            if (action.type == "DELETE") {
+                this.deleteOption(action.option.rooftopGoogleOptionId);
+            }
         },
         getOptions() {
             let that = this;
@@ -82,7 +94,17 @@ export default {
                 .get('https://services.metricsamsi.com/v1.0/dealers/Options/'+ that.account +'?apiKey='+ that.googleId)
                 .then(function (response) {
                     that.options = response.data.data;
-//                    console.log(that.options[0]);
+                })
+                .catch(e => {
+                    that.errors.push(e);
+                });
+        },
+        deleteOption(optionId) {
+            let that = this;
+            axios
+                .delete('https://services.metricsamsi.com/v1.0/dealers/Options/'+ optionId +'?apiKey='+ that.googleId)
+                .then(function () {
+                    that.refreshMe();
                 })
                 .catch(e => {
                     that.errors.push(e);

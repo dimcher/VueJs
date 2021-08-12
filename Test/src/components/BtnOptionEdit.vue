@@ -5,22 +5,15 @@
 <script>
 export default {
     name: 'BtnOptionEdit',
-    components: {
-    },
     props: {
         option: {
             type: Object
-        }
-    },
-    data: () => {
-        return {
         }
     },
     methods: {
         actionOption: function () {
             this.$emit('doAction', { type: 'EDIT', option: this.option });
         }
-
     }
 }
 </script>

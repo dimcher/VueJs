@@ -2,11 +2,12 @@
     <div>
         <div class="sign">Option Editor</div>
         <div>Option: {{option.rooftopGoogleOptionId}}</div>
-        <p v-for="(v, i) in keys" :key="`row-${i}`">
-            {{ head[v] }} <input type="text" :name="`${v}`" :value="option[v]">
-        </p>
-        <button @click="cancelEdit">CANCEL</button>
-        <button @click="editProps">SUBMIT</button>
+        <div class="inputs" v-for="(v, i) in keys" :key="`row-${i}`">
+            <div class="desc">{{ head[v] }}</div>
+            <div class="input"><input type="text" :name="`${v}`" :value="option[v]"></div>
+        </div>
+        <button @click="procProps">SUBMIT</button>
+        <button @click="closeAction">CANCEL</button>
     </div>
 </template>
 
@@ -30,13 +31,14 @@ export default {
     },
     data: () => {
         return {
+            errors: []
         }
     },
     methods: {
-        cancelEdit: function () {
+        closeAction: function () {
             this.$emit('doAction', {});
         },
-        editProps: function () {
+        procProps: function () {
             let props = {};
             for(const key of this.keys) {
                 props[key] = document.querySelector("input[name="+ key + "]").value;
@@ -45,12 +47,12 @@ export default {
             axios
                 .patch('https://services.metricsamsi.com/v1.0/dealers/Options/'+ that.option.rooftopGoogleOptionId +'?apiKey='+ that.googleId, props)
                 .then(function () {
-                    console.log("done");
+                    that.closeAction();
                 })
                 .catch(e => {
                     that.errors.push(e);
+                    that.closeAction();
                 });
-            this.$emit('editedProps', props);
         }
     }
 }
@@ -61,4 +63,6 @@ export default {
     .sign { color: red; }
     input { width: 300px; }
     button { font-weight: bold; }
+    .inputs { margin: 10px; }
+    .inputs > div.desc { font-weight: bold; }
 </style>
