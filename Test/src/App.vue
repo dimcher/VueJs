@@ -25,7 +25,7 @@ export default {
   props: {
       googleIds: {
         style: String,
-        default: ''// 81c14de2-6891-461b-9ea6-3ed218675b8f
+        default: ""
       }
   },
   data: () => {
