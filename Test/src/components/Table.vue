@@ -81,7 +81,6 @@ export default {
             this.getOptions();
         },
         doAction(action) {
-            console.log('b');
             this.action = action;
             
             if (action.type == "DELETE") {
